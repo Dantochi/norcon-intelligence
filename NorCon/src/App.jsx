@@ -238,7 +238,7 @@ export default function App() {
   }, [authenticate]);
 
   // ── Sheet handlers (passed into ProjectSetup) ──────────────────────────────
-  const handleSheetUpdate = useCallback((sheetId, data, status, tierOverride) => {
+  const handleSheetUpdate = useCallback((sheetId, data, status, tierOverride, options) => {
 
     // ── Special keys ─────────────────────────────────────────────────────────
 
@@ -319,7 +319,8 @@ export default function App() {
       const prevSheet = prev.l2.sheets[sheetId] || { data:{}, locked:false, status:"empty" };
       const incomingData = data || {};
       const { __idMap, __removedIds, ...cleanData } = incomingData;
-      const nextData  = { ...prevSheet.data, ...cleanData };
+      // Normally we merge changes in, but Discard needs a full reset back to the saved copy.
+      const nextData  = options?.replace === true ? cleanData : { ...prevSheet.data, ...cleanData };
       let nextCodes   = prev.l2.loginCodes || [];
 
       // ── Team sync (H1 fix) ────────────────────────────────────────────────

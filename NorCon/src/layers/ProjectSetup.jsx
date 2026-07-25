@@ -761,6 +761,7 @@ export default function ProjectSetup({ state, onSheetUpdate, onSheetApprove, onS
   const [activeSheet, setActiveSheet] = useState("01");
   const [dirtySheet, setDirtySheet] = useState(false);
   const [savingPrompt, setSavingPrompt] = useState(null);
+  const sheetSnapshotRef = useRef({});
 
   const getCharterField = (key) => sheets["01"]?.data?.charter?.[key] || "";
   const isFieldKnown = (key) => {
@@ -1495,11 +1496,32 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
     if (dirtySheet) setSavingPrompt(id);
     else { setActiveSheet(id); onSheetNav(id); }
   };
+  const clearSheetSnapshot = (sheetId) => {
+    if (!sheetId) return;
+    // Forget the saved copy once the user has either saved or discarded.
+    delete sheetSnapshotRef.current[sheetId];
+  };
+  const captureSheetSnapshot = (sheetId) => {
+    if (!sheetId || sheetSnapshotRef.current[sheetId]) return;
+    const currentSheet = sheets[sheetId];
+    if (!currentSheet) return;
+    // Keep one copy of the sheet before edits so Discard can put it back.
+    sheetSnapshotRef.current[sheetId] = JSON.parse(JSON.stringify(currentSheet));
+  };
   const confirmSave = () => {
     if (savingPrompt) { onSheetApprove(activeSheet); setActiveSheet(savingPrompt); onSheetNav(savingPrompt); }
+    clearSheetSnapshot(activeSheet);
     setSavingPrompt(null); setDirtySheet(false);
   };
   const discardAndNav = () => {
+    const snapshot = sheetSnapshotRef.current[activeSheet];
+    if (snapshot) {
+      // Restore the exact old sheet data instead of merging new and old values.
+      onSheetUpdate(activeSheet, snapshot.data || {}, snapshot.status || "in-progress", undefined, { replace: true });
+      if (snapshot.locked) onSheetApprove(activeSheet);
+      else onSheetUnlock(activeSheet);
+    }
+    clearSheetSnapshot(activeSheet);
     if (savingPrompt) { setActiveSheet(savingPrompt); onSheetNav(savingPrompt); }
     setSavingPrompt(null); setDirtySheet(false);
   };
@@ -1956,7 +1978,7 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
           <button onClick={()=>onSheetUnlock(activeSheet)}
             style={{ padding:"6px 12px", background:"none", border:`1px solid ${C.border}`, borderRadius:5, color:C.dim, fontSize:11, cursor:"pointer" }}>Unlock to Edit</button>
         ) : (
-          <button onClick={()=>{onSheetApprove(activeSheet);setDirtySheet(false);}}
+          <button onClick={()=>{onSheetApprove(activeSheet);clearSheetSnapshot(activeSheet);setDirtySheet(false);}}
             style={{ padding:"6px 14px", background:C.accent, border:"none", borderRadius:5, color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer" }}>Save Changes</button>
         )}
         {l3Unlocked && (
@@ -1981,7 +2003,8 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
         {SheetComp && (
           <SheetComp data={sheets[activeSheet]?.data||{}} locked={sheets[activeSheet]?.locked||false}
             project={project} loginCodes={l2?.loginCodes||[]} allSheets={sheets}
-            onUpdate={(data,status)=>{ setDirtySheet(true); onSheetUpdate(activeSheet,data,status); }}/>
+            // Save a safe copy before each edit so Discard can roll the sheet back.
+            onUpdate={(data,status)=>{ captureSheetSnapshot(activeSheet); setDirtySheet(true); onSheetUpdate(activeSheet,data,status); }}/>
         )}
       </div>
 

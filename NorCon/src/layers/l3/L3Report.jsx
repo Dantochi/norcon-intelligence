@@ -75,7 +75,7 @@ function buildProjectContext(state,project,charter,activities,milestones,risks,d
 }
 
 // ── Shared card shell ────────────────────────────────────────────────────────
-function GridCard({ title, icon, children }) {
+function GridCard({ title, icon, children, scrollable }) {
   return (
     <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:9,
       display:"flex", flexDirection:"column", height:"100%", minHeight:0, overflow:"hidden", boxSizing:"border-box" }}>
@@ -84,7 +84,7 @@ function GridCard({ title, icon, children }) {
         <span style={{ fontSize:15 }}>{icon}</span>
         <span style={{ fontSize:13, fontWeight:700, color:C.sage }}>{title}</span>
       </div>
-      <div style={{ flex:1, minHeight:0, overflowY:"auto", padding:"12px 16px" }}>
+      <div style={{ flex:1, minHeight:0, overflowY:scrollable?"auto":"hidden", padding:"12px 16px" }}>
         {children}
       </div>
     </div>
@@ -353,7 +353,7 @@ Write these sections in full:
   // RENDER — 2 × 2 grid
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gridTemplateRows:"75% 25%", gap:12, padding:"12px 16px", overflow:"hidden", height:"100%", boxSizing:"border-box" }}>
+    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gridTemplateRows:"60% 40%", gap:12, padding:"12px 16px", overflow:"hidden", height:"100%", boxSizing:"border-box" }}>
 
       {/* ══ TOP-LEFT: CHANGE CONTROL ══ */}
       <GridCard title="Change Control" icon="🔄">
@@ -526,7 +526,7 @@ Write these sections in full:
       </GridCard>
 
       {/* ══ BOTTOM-LEFT: PROJECT WORKBOOK ══ */}
-      <GridCard title="Project Workbook" icon="📊">
+      <GridCard title="Project Workbook" icon="📊" scrollable={false}>
         <div style={{ fontSize:11, color:C.muted, marginBottom:10, lineHeight:1.5 }}>
           Fully styled Excel workbook with AI executive summary and 10 registers including benefits & KD tracker, issues, baseline comparison, and sustainability evidence.
         </div>
@@ -546,7 +546,7 @@ Write these sections in full:
           </div>
         )}
         <button onClick={generateWorkbook} disabled={busy}
-          style={{ width:"100%", padding:"10px", background:busy&&genState==="workbook"?C.surface2:C.accent, color:"#fff", border:"none", borderRadius:7, fontSize:13, fontWeight:700, cursor:busy?"not-allowed":"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8, marginTop:"auto" }}>
+          style={{ width:"100%", padding:"10px", background:busy&&genState==="workbook"?C.surface2:C.accent, color:"#fff", border:"none", borderRadius:7, fontSize:13, fontWeight:700, cursor:busy?"not-allowed":"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8, marginTop: "4rem" }}>
           {busy&&genState==="workbook"
             ? <><div style={{ width:13,height:13,border:"2px solid rgba(255,255,255,.3)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .8s linear infinite" }}/>{genStep}</>
             : "📊 Download Project Workbook"}
@@ -554,7 +554,7 @@ Write these sections in full:
       </GridCard>
 
       {/* ══ BOTTOM-RIGHT: PROJECT REPORT ══ */}
-      <GridCard title="Project Report" icon="📄">
+      <GridCard title="Project Report" icon="📄" scrollable={false}>
         <div style={{ fontSize:11, color:C.muted, marginBottom:10, lineHeight:1.5 }}>
           A comprehensive narrative report written by Claude, covering all nine sections. Downloads as a properly formatted Word document (.docx) suitable for steering committees and project closure.
         </div>
@@ -572,7 +572,7 @@ Write these sections in full:
           </div>
         )}
         <button onClick={generateReport} disabled={busy}
-          style={{ width:"100%", padding:"10px", background:busy&&genState==="report"?C.surface2:C.accent, color:"#fff", border:"none", borderRadius:7, fontSize:13, fontWeight:700, cursor:busy?"not-allowed":"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8, marginTop:"auto" }}>
+          style={{ width:"100%", padding:"10px", background:busy&&genState==="report"?C.surface2:C.accent, color:"#fff", border:"none", borderRadius:7, fontSize:13, fontWeight:700, cursor:busy?"not-allowed":"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8, marginTop: "4.2rem" }}>
           {busy&&genState==="report"
             ? <><div style={{ width:13,height:13,border:"2px solid rgba(255,255,255,.3)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .8s linear infinite" }}/>{reportMsg}</>
             : "📄 Generate Project Report (.docx)"}

@@ -232,7 +232,7 @@ export default function Sheet03Schedule({ data, locked, project, loginCodes, onU
 
   return (
     <div style={{maxWidth:960}}>
-      <div style={{display:"flex",gap:6,marginBottom:16,overflowX:"auto"}}>
+      <div className="schedule-phase-strip" style={{display:"flex",gap:6,marginBottom:16,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none"}}>
         {Object.entries(phaseDesc).map(([phase,desc]) => (
           <div key={phase} style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:6,padding:"7px 10px",minWidth:140,flexShrink:0}}>
             <div style={{fontSize:10,fontWeight:700,color:C.accentL,marginBottom:2}}>{phase}</div>
@@ -294,6 +294,10 @@ export default function Sheet03Schedule({ data, locked, project, loginCodes, onU
           + Add Milestone
         </button>
       )}
+
+      <style>{`
+        .schedule-phase-strip::-webkit-scrollbar { display: none; }
+      `}</style>
     </div>
   );
 }
