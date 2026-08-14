@@ -245,13 +245,11 @@ export default function L3Gantt({ activities, milestones, member, onStateChange 
                               <span style={{fontSize:11,color:C.dim,fontWeight:600}}>Edit: {item.name||item._id}</span>
                               <div>
                                 <div style={{fontSize:9,color:C.muted,marginBottom:2}}>Start Date</div>
-                                <input type="date" value={editStart} onChange={e=>setEditStart(e.target.value)}
-                                  style={{background:C.surface2,border:`1px solid ${C.border}`,borderRadius:4,color:C.sage,fontSize:11,padding:"4px 8px",outline:"none"}}/>
+                                <DatePickerField value={editStart} onChange={setEditStart} style={{background:C.surface2,border:`1px solid ${C.border}`,borderRadius:4,color:C.sage,fontSize:11,padding:"4px 8px",outline:"none"}} />
                               </div>
                               <div>
                                 <div style={{fontSize:9,color:C.muted,marginBottom:2}}>End / Target Date</div>
-                                <input type="date" value={editEnd} onChange={e=>setEditEnd(e.target.value)}
-                                  style={{background:C.surface2,border:`1px solid ${C.border}`,borderRadius:4,color:C.sage,fontSize:11,padding:"4px 8px",outline:"none"}}/>
+                                <DatePickerField value={editEnd} onChange={setEditEnd} style={{background:C.surface2,border:`1px solid ${C.border}`,borderRadius:4,color:C.sage,fontSize:11,padding:"4px 8px",outline:"none"}} />
                               </div>
                               <button onClick={()=>saveEdit(item._id,item.itemType)}
                                 style={{padding:"5px 14px",background:C.accent,border:"none",borderRadius:4,color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",marginTop:10}}>

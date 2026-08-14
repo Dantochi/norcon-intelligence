@@ -10,6 +10,165 @@ const RESPONSES_OPP    = ["Exploit","Enhance","Share","Accept"];
 const LEVELS           = ["1 - Low","2 - Medium","3 - High"];
 const PRIORITIES       = ["High","Medium","Low"];
 const ISSUE_STATUSES   = ["Open","In Progress","Resolved","Escalated"];
+const CALENDAR_DAYS = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+
+function formatYmd(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function parseYmd(value) {
+  if (!value) return null;
+  const [y, m, d] = value.split("-").map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+
+function DatePickerField({ value, onChange, disabled }) {
+  const [open, setOpen] = useState(false);
+  const [viewDate, setViewDate] = useState(() => parseYmd(value) || new Date());
+
+  useEffect(() => {
+    if (value) setViewDate(parseYmd(value));
+  }, [value]);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (event) => {
+      if (!event.target.closest("[data-date-field]")) setOpen(false);
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [open]);
+
+  const monthLabel = viewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const selectedDate = value ? parseYmd(value) : null;
+  const monthStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
+  const firstDay = monthStart.getDay();
+  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+
+  const cells = [];
+  for (let i = 0; i < firstDay; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(viewDate.getFullYear(), viewDate.getMonth(), d));
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const selectDate = (date) => {
+    if (!date) return;
+    onChange(formatYmd(date));
+    setViewDate(date);
+    setOpen(false);
+  };
+
+  const displayValue = value
+    ? new Date(`${value}T00:00:00`).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+    : "Select date";
+
+  return (
+    <div data-date-field style={{ position: "relative", width: "100%" }}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => !disabled && setOpen(v => !v)}
+        style={{
+          ...inp,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingRight: 10,
+          cursor: disabled ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.8 : 1,
+          background: disabled ? C.surface : C.surface2,
+        }}
+      >
+        <span style={{ color: value ? C.sage : C.muted, fontSize: 12 }}>{displayValue}</span>
+        <span aria-hidden="true" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", color: C.accentL }}>
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <path d="M7 2.75a.75.75 0 0 1 .75.75V4h8.5V3.5a.75.75 0 0 1 1.5 0V4h1.25A2.25 2.25 0 0 1 21 6.25v11.5A2.25 2.25 0 0 1 18.75 20H5.25A2.25 2.25 0 0 1 3 17.75V6.25A2.25 2.25 0 0 1 5.25 4H6.5V3.5A.75.75 0 0 1 7 2.75Zm-1.25 6.5h13.5v9.5a.75.75 0 0 1-.75.75H5.5a.75.75 0 0 1-.75-.75v-9.5Zm2.5-4.5h8.5V5h-8.5v.75Zm2.25 6.5h1.5v1.5h-1.5v-1.5Zm3.5 0h1.5v1.5h-1.5v-1.5Zm-7 3h1.5v1.5h-1.5v-1.5Zm3.5 0h1.5v1.5h-1.5v-1.5Zm3.5 0h1.5v1.5h-1.5v-1.5Z" fill="currentColor"/>
+          </svg>
+        </span>
+      </button>
+
+      {open && (
+        <div style={{
+          position: "absolute",
+          top: "calc(100% + 8px)",
+          left: 0,
+          width: 270,
+          background: "#0f2b1d",
+          border: `1px solid ${C.border}`,
+          borderRadius: 12,
+          boxShadow: "0 18px 40px rgba(0,0,0,0.45)",
+          zIndex: 50,
+          overflow: "hidden",
+        }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "10px 10px 6px",
+            borderBottom: `1px solid ${C.border}`,
+            background: "rgba(255,255,255,0.02)",
+          }}>
+            <button type="button" onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))}
+              style={{ background: "none", border: "none", color: C.sage, cursor: "pointer", fontSize: 20, lineHeight: 1 }}>‹</button>
+            <div style={{ color: C.sage, fontWeight: 700, fontSize: 12 }}>{monthLabel}</div>
+            <button type="button" onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))}
+              style={{ background: "none", border: "none", color: C.sage, cursor: "pointer", fontSize: 20, lineHeight: 1 }}>›</button>
+          </div>
+
+          <div style={{ padding: "10px 10px 8px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 6, textAlign: "center" }}>
+              {CALENDAR_DAYS.map(day => (
+                <div key={day} style={{ fontSize: 10, color: C.muted, fontWeight: 700 }}>{day}</div>
+              ))}
+
+              {cells.map((date, idx) => {
+                const isSelected = !!selectedDate && !!date && formatYmd(date) === formatYmd(selectedDate);
+                const isToday = !!date && formatYmd(date) === formatYmd(new Date());
+                const inCurrentMonth = !!date && date.getMonth() === viewDate.getMonth();
+                if (!date) {
+                  return <div key={`empty-${idx}`} style={{ height: 30 }} />;
+                }
+
+                return (
+                  <button
+                    key={formatYmd(date)}
+                    type="button"
+                    onClick={() => selectDate(date)}
+                    style={{
+                      height: 30,
+                      border: "1px solid transparent",
+                      borderRadius: 6,
+                      background: isSelected ? C.accent : "transparent",
+                      color: isSelected ? "#fff" : inCurrentMonth ? C.sage : C.muted,
+                      cursor: "pointer",
+                      fontSize: 11,
+                      fontWeight: isSelected ? 700 : 400,
+                      boxShadow: isToday && !isSelected ? `inset 0 0 0 1px ${C.accentL}` : "none",
+                    }}
+                  >
+                    {date.getDate()}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 8, paddingTop: 10 }}>
+              <button type="button" onClick={() => { onChange(""); setOpen(false); }} style={{ flex: 1, background: "none", border: `1px solid ${C.border}`, borderRadius: 6, color: C.muted, padding: "7px 8px", cursor: "pointer", fontSize: 11 }}>
+                Clear
+              </button>
+              <button type="button" onClick={() => { const today = new Date(); onChange(formatYmd(today)); setViewDate(today); setOpen(false); }} style={{ flex: 1, background: C.accent, border: "none", borderRadius: 6, color: "#fff", padding: "7px 8px", cursor: "pointer", fontSize: 11, fontWeight: 700 }}>
+                Today
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 // RAG is inverted for Opportunities: high score = desirable (green), low = amber/warning
 function ragColor(type, l, i) {
@@ -423,7 +582,7 @@ export default function Sheet05Risks({ data, locked, loginCodes, onUpdate }) {
                   </div>
 
                   {/* Next review date */}
-                  <div><Lbl c="Next Review Date"/><input style={inp} type="date" value={r.nextReviewDate||""} disabled={fieldDisabled} onChange={e=>updateRisk(i,"nextReviewDate",e.target.value)}/></div>
+                  <div><Lbl c="Next Review Date"/><DatePickerField value={r.nextReviewDate||""} disabled={fieldDisabled} onChange={v => updateRisk(i, "nextReviewDate", v)} /></div>
                 </div>
               </div>
             );
@@ -497,8 +656,8 @@ export default function Sheet05Risks({ data, locked, loginCodes, onUpdate }) {
                       onChange={v=>updateIssue(i,"escalationPath",v)}
                       options={escalationOptions} placeholder="Who to escalate to…"/>
                   </div>
-                  <div><Lbl c="Date Raised"/><input style={inp} type="date" value={iss.raisedDate||""} disabled={issueReadOnly} onChange={e=>updateIssue(i,"raisedDate",e.target.value)}/></div>
-                  <div><Lbl c="Target Resolution"/><input style={inp} type="date" value={iss.targetResolutionDate||""} disabled={issueReadOnly} onChange={e=>updateIssue(i,"targetResolutionDate",e.target.value)}/></div>
+                  <div><Lbl c="Date Raised"/><DatePickerField value={iss.raisedDate||""} disabled={issueReadOnly} onChange={v => updateIssue(i, "raisedDate", v)} /></div>
+                  <div><Lbl c="Target Resolution"/><DatePickerField value={iss.targetResolutionDate||""} disabled={issueReadOnly} onChange={v => updateIssue(i, "targetResolutionDate", v)} /></div>
                   <div style={{ gridColumn:"1/-1" }}><Lbl c="Resolution / Actions Taken"/><input style={inp} value={iss.resolution||""} disabled={issueReadOnly} onChange={e=>updateIssue(i,"resolution",e.target.value)} placeholder="What has been or will be done?"/></div>
                 </div>
               </div>

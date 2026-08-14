@@ -53,7 +53,7 @@ export default function LandingScreen({ onCreateNew, onLogin, lastLogin }) {
     <div style={{
       background: C.bg, minHeight:"100vh", display:"flex",
       flexDirection:"column", alignItems:"center", justifyContent:"center",
-      padding:24, fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+      padding:24, fontFamily:'"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     }}>
 
       {/* Logo + title */}

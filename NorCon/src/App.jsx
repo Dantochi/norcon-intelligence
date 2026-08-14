@@ -528,7 +528,7 @@ export default function App() {
 
   return (
     <div style={{ background:C.bg, color:C.sage, height:"100vh", display:"flex", flexDirection:"column",
-      fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif", fontSize:13, overflow:"hidden" }}>
+      fontFamily:"\"Inter\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif" }}>
 
       {/* ── L3 — full screen ── */}
       {state.activeLayer === "L3" && (

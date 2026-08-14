@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import DatePickerField from "../../components/DatePickerField.jsx";
 
 const C = {
   surface:"#122E1E", surface2:"#183D28", border:"#1F4D34",
@@ -212,9 +213,9 @@ Return only the strategy text, no headers, no bullets.`;
                   </span>
                 </div>
                 {nextContactDate && canEdit && (
-                  <input type="date" style={{ ...inp, width:"auto", fontSize:10 }}
-                    value={nextContactDate}
-                    onChange={e => onUpdateSH({ commPlan:{ ...(sh.commPlan||{}), nextContactDate:e.target.value }, commsNextDate:e.target.value })}/>
+                  <DatePickerField value={nextContactDate}
+                    onChange={v => onUpdateSH({ commPlan:{ ...(sh.commPlan||{}), nextContactDate:v }, commsNextDate:v })}
+                    style={{ ...inp, width:"auto", fontSize:10 }} />
                 )}
               </div>
               {sh.commsContent && <div style={{ fontSize:11, color:C.dim, marginTop:4 }}>Purpose: {sh.commsContent}</div>}
@@ -311,8 +312,8 @@ Return only the strategy text, no headers, no bullets.`;
                 border:`1px solid ${C.border}` }}>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8, marginBottom:8 }}>
                   <div><Lbl c="Date"/>
-                    <input type="date" style={inp} value={logForm.date}
-                      onChange={e=>setLogForm(f=>({...f,date:e.target.value}))}/>
+                    <DatePickerField style={inp} value={logForm.date}
+                      onChange={v=>setLogForm(f=>({...f,date:v}))} />
                   </div>
                   <div><Lbl c="Channel"/>
                     <select style={inp} value={logForm.channel} onChange={e=>setLogForm(f=>({...f,channel:e.target.value}))}>

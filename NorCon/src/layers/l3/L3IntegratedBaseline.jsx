@@ -497,15 +497,11 @@ export default function L3IntegratedBaseline({ state, activities, milestones, me
                         </div>
 
                         <div style={{ width:W_DATE, display:"flex", flexDirection:"column", justifyContent:"center", borderRight:`1px solid ${C.border}22`, flexShrink:0, padding:"2px 4px", gap:2 }}>
-                          <input type="date" value={item.startDate||""} disabled={!canEdit} style={dateInp}
-                            onFocus={e => handleDateFocus(item._id,"startDate",e.target.value)}
-                            onChange={e => updateItemDate(item._id,item.itemType,"startDate",e.target.value)}
-                            onBlur={e => handleDateBlur(item._id,item.itemType,"startDate",e.target.value)} />
+                          <DatePickerField value={item.startDate||""} disabled={!canEdit} style={dateInp}
+                            onChange={v => updateItemDate(item._id,item.itemType,"startDate",v)} />
                           {!isMile
-                            ? <input type="date" value={item.targetDate||""} disabled={!canEdit} style={dateInp}
-                                onFocus={e => handleDateFocus(item._id,"targetDate",e.target.value)}
-                                onChange={e => updateItemDate(item._id,item.itemType,"targetDate",e.target.value)}
-                                onBlur={e => handleDateBlur(item._id,item.itemType,"targetDate",e.target.value)} />
+                            ? <DatePickerField value={item.targetDate||""} disabled={!canEdit} style={dateInp}
+                                onChange={v => updateItemDate(item._id,item.itemType,"targetDate",v)} />
                             : <span style={{ fontSize:9, color:C.muted, paddingLeft:2 }}>milestone</span>
                           }
                         </div>
@@ -689,7 +685,7 @@ export default function L3IntegratedBaseline({ state, activities, milestones, me
                   {items.map(i => <option key={i._id} value={i._id}>{i.name||i.description}</option>)}
                 </select>
               ],
-              ["DATE",        <input type="date" style={inp} value={newExp.date}        onChange={e=>setNewExp(p=>({...p,date:e.target.value}))} />],
+              ["DATE",        <DatePickerField style={inp} value={newExp.date} onChange={v=>setNewExp(p=>({...p,date:v}))} />],
               ["AMOUNT £",    <input style={inp} value={newExp.amount}      onChange={e=>setNewExp(p=>({...p,amount:e.target.value}))}      placeholder="0.00" />],
               ["DESCRIPTION", <input style={inp} value={newExp.description} onChange={e=>setNewExp(p=>({...p,description:e.target.value}))} placeholder="e.g. Invoice" />],
               ["REF",         <input style={inp} value={newExp.invoiceRef}  onChange={e=>setNewExp(p=>({...p,invoiceRef:e.target.value}))}  placeholder="INV-001" />],

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DatePickerField from "../../components/DatePickerField.jsx";
 
 const C = { surface:"#122E1E", surface2:"#183D28", border:"#1F4D34", accent:"#2E7D52", accentL:"#3a9962", sage:"#E5F0E8", sageDim:"#b8d4c0", dim:"#8aac96", muted:"#5a7a66", risk:"#e05c5c", milestone:"#e0a23a" };
 
@@ -254,8 +255,8 @@ export default function Sheet03Schedule({ data, locked, project, loginCodes, onU
             {!locked && project?.status !== "active" && <button onClick={()=>removeActivity(i)} style={{background:"none",border:"none",color:C.risk,cursor:"pointer",fontSize:16,paddingBottom:2,alignSelf:"end"}}>✕</button>}
           </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:8}}>
-            <div><Lbl c="Start Date"/><input style={inp} type="date" value={a.startDate||""} disabled={readOnly} onChange={e=>updateActivity(i,"startDate",e.target.value)}/></div>
-            <div><Lbl c="End Date"/><input style={inp} type="date" value={a.targetDate||""} disabled={readOnly} onChange={e=>updateActivity(i,"targetDate",e.target.value)}/></div>
+            <div><Lbl c="Start Date"/><DatePickerField value={a.startDate||""} disabled={readOnly} onChange={v=>updateActivity(i,"startDate",v)} style={inp} /></div>
+            <div><Lbl c="End Date"/><DatePickerField value={a.targetDate||""} disabled={readOnly} onChange={v=>updateActivity(i,"targetDate",v)} style={inp} /></div>
             <div><Lbl c="Planned Cost (GBP)"/><input style={{...inp,textAlign:"right"}} type="number" min="0" step="0.01" value={costData[a._id]?.plannedAmount||""} disabled={readOnly} onChange={e=>updateCost(a._id,e.target.value)} placeholder="0.00"/></div>
           </div>
           <div style={{marginTop:8}}>
@@ -279,7 +280,7 @@ export default function Sheet03Schedule({ data, locked, project, loginCodes, onU
             <div><Lbl c="ID"/><EditableField value={m._id} disabled={readOnly} onChange={v=>updateMilestone(i,"_id",v)} placeholder="MS-001"/></div>
             <div><Lbl c="Milestone Name"/><EditableField value={m.name} disabled={readOnly} onChange={v=>updateMilestone(i,"name",v)} placeholder="Milestone name"/></div>
             <div><Lbl c="APM Phase"/><EditableSelect value={m.phase} disabled={readOnly} onChange={v=>updateMilestone(i,"phase",v)} options={APM_PHASES} placeholder="Select phase..."/></div>
-            <div><Lbl c="Target Date"/><input style={inp} type="date" value={m.targetDate||""} disabled={readOnly} onChange={e=>updateMilestone(i,"targetDate",e.target.value)}/></div>
+            <div><Lbl c="Target Date"/><DatePickerField value={m.targetDate||""} disabled={readOnly} onChange={v=>updateMilestone(i,"targetDate",v)} style={inp} /></div>
             <div><Lbl c="Planned Cost (GBP)"/><input style={{...inp,textAlign:"right"}} type="number" min="0" step="0.01" value={costData[m._id]?.plannedAmount||""} disabled={readOnly} onChange={e=>updateCost(m._id,e.target.value)} placeholder="0.00"/></div>
             {!locked && project?.status !== "active" && <button onClick={()=>removeMilestone(i)} style={{background:"none",border:"none",color:C.risk,cursor:"pointer",fontSize:16,paddingBottom:2,alignSelf:"end"}}>✕</button>}
           </div>

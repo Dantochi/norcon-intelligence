@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DatePickerField from "../../components/DatePickerField.jsx";
 
 const C = { bg:"#0D2B1B", surface:"#122E1E", surface2:"#183D28", border:"#1F4D34", accent:"#2E7D52", accentL:"#3a9962", sage:"#E5F0E8", dim:"#8aac96", muted:"#5a7a66", risk:"#e05c5c", milestone:"#e0a23a" };
 const inp = { width:"100%", background:C.surface2, border:`1px solid ${C.border}`, borderRadius:6, color:C.sage, fontSize:13, padding:"9px 12px", outline:"none", boxSizing:"border-box", fontFamily:"inherit" };
@@ -161,11 +162,11 @@ export default function Sheet01Charter({ data, locked, onUpdate }) {
         ))}
         <div>
           <Lbl>Start Date</Lbl>
-          <input style={inp} type="date" value={form.startDate} disabled={locked} onChange={e => setField("startDate", e.target.value)}/>
+          <DatePickerField value={form.startDate} disabled={locked} onChange={v => setField("startDate", v)} style={inp} />
         </div>
         <div>
           <Lbl>End Date</Lbl>
-          <input style={inp} type="date" value={form.endDate} disabled={locked} onChange={e => setField("endDate", e.target.value)}/>
+          <DatePickerField value={form.endDate} disabled={locked} onChange={v => setField("endDate", v)} style={inp} />
         </div>
       </div>
 
@@ -243,7 +244,7 @@ export default function Sheet01Charter({ data, locked, onUpdate }) {
             </div>
             <div>
               <Lbl>Target Realisation Date</Lbl>
-              <input style={inp} type="date" value={b.targetDate||""} disabled={locked} onChange={e => updateBenefit(bi, "targetDate", e.target.value)}/>
+              <DatePickerField value={b.targetDate||""} disabled={locked} onChange={v => updateBenefit(bi, "targetDate", v)} style={inp} />
             </div>
             <div>
               <Lbl>Evidence / Sustainment Plan</Lbl>
@@ -280,7 +281,7 @@ export default function Sheet01Charter({ data, locked, onUpdate }) {
                   </div>
                   <div>
                     <Lbl>Target Date</Lbl>
-                    <input style={inp} type="date" value={o.targetDate||""} disabled={locked} onChange={e => updateObjective(bi, oi, "targetDate", e.target.value)}/>
+                    <DatePickerField value={o.targetDate||""} disabled={locked} onChange={v => updateObjective(bi, oi, "targetDate", v)} style={inp} />
                   </div>
                 </div>
               </div>

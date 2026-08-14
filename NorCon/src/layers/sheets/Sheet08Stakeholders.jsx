@@ -430,8 +430,8 @@ export default function Sheet08Stakeholders({ data, locked, loginCodes, onUpdate
                           placeholder={derivedFrequency(seg.apm,s.ease)||"Set frequency"}/>
                       </div>
                       <div><Lbl c="Next Contact Date"/>
-                        <input type="date" style={inp} value={s.commsNextDate||""} disabled={locked}
-                          onChange={e=>updateSH(idx,"commsNextDate",e.target.value)}/>
+                        <DatePickerField value={s.commsNextDate||""} disabled={locked}
+                          onChange={v=>updateSH(idx,"commsNextDate",v)} style={inp} />
                       </div>
                       <div><Lbl c="Communications Owner"/>
                         <select style={inp} value={s.commsOwner||""} disabled={locked}

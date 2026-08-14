@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import DatePickerField from "../../components/DatePickerField.jsx";
 
 const C = { surface:"#122E1E", surface2:"#183D28", border:"#1F4D34", accent:"#2E7D52", accentL:"#3a9962", sage:"#E5F0E8", dim:"#8aac96", muted:"#5a7a66", risk:"#e05c5c", milestone:"#e0a23a", activity:"#3ae0a2" };
 const inp = { background:C.surface2, border:`1px solid ${C.border}`, borderRadius:5, color:C.sage, fontSize:12, padding:"6px 9px", outline:"none", boxSizing:"border-box", fontFamily:"inherit", width:"100%" };
@@ -140,7 +141,7 @@ export default function Sheet07KDTracker({ data, locked, allSheets, onUpdate }) 
             </div>
             <div>
               <Lbl c="Deadline"/>
-              <input style={inp} type="date" value={d.deadlineV1||""} disabled={locked} onChange={e => updateDeliverable(di, "deadlineV1", e.target.value)}/>
+              <DatePickerField value={d.deadlineV1||""} disabled={locked} onChange={v => updateDeliverable(di, "deadlineV1", v)} style={inp} />
             </div>
             <div>
               <Lbl c="Notes"/>

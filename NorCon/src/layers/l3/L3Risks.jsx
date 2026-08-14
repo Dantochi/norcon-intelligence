@@ -327,7 +327,7 @@ function RiskCard({ risk, idx, canEdit, canPropose, onUpdate, onRaiseCCR, onClos
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 110px 110px auto", gap:6, marginTop:8 }}>
                   <input style={inp} value={newAction.text}    onChange={e=>setNewAction(p=>({...p,text:e.target.value}))}    placeholder="Action description"/>
                   <OwnerSelect value={newAction.owner} onChange={v=>setNewAction(p=>({...p,owner:v}))} teamNames={teamNames} placeholder="Owner"/>
-                  <input style={inp} type="date" value={newAction.dueDate} onChange={e=>setNewAction(p=>({...p,dueDate:e.target.value}))}/>
+                  <DatePickerField value={newAction.dueDate} onChange={v=>setNewAction(p=>({...p,dueDate:v}))} style={inp} />
                   <button onClick={addAction} style={{ padding:"4px 10px", background:C.accent, border:"none", borderRadius:4, color:"#fff", fontSize:11, cursor:"pointer", whiteSpace:"nowrap" }}>+ Add</button>
                 </div>
               ) : (
@@ -592,7 +592,7 @@ function IssueCard({ iss, idx, canEdit, canPropose, onUpdate, onRaiseCCR, onDele
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 110px 110px auto", gap:6, marginTop:8 }}>
                   <input style={inp} value={newAction.text}    onChange={e=>setNewAction(p=>({...p,text:e.target.value}))}    placeholder="Action taken or assigned"/>
                   <OwnerSelect value={newAction.owner} onChange={v=>setNewAction(p=>({...p,owner:v}))} teamNames={teamNames} placeholder="Owner"/>
-                  <input style={inp} type="date" value={newAction.dueDate} onChange={e=>setNewAction(p=>({...p,dueDate:e.target.value}))}/>
+                  <DatePickerField value={newAction.dueDate} onChange={v=>setNewAction(p=>({...p,dueDate:v}))} style={inp} />
                   <button onClick={addAction} style={{ padding:"4px 10px", background:C.accent, border:"none", borderRadius:4, color:"#fff", fontSize:11, cursor:"pointer", whiteSpace:"nowrap" }}>+ Log</button>
                 </div>
               ) : (

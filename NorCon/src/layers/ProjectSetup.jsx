@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import mammoth from "mammoth";
+import DatePickerField from "../components/DatePickerField.jsx";
 import { generateLoginCode } from "../store/appStore.js";
 import Sheet01Charter      from "./sheets/Sheet01Charter.jsx";
 import Sheet02Team         from "./sheets/Sheet02Team.jsx";
@@ -50,6 +51,9 @@ const WIZARD_SHEETS = {
 };
 // Schedule ("03") always appended last — needs maximum accumulated context
 const scheduleLast = (arr) => [...arr, "03"];
+
+// hide scrollbars in Firefox and IE/Edge (they don't support ::-webkit-scrollbar)
+const hiddenScrollbarStyle = { scrollbarWidth:"none", msOverflowStyle:"none" };
 
 // Normalise any date string to YYYY-MM-DD (required by <input type="date">).
 // Accepts ISO strings, MM/DD/YYYY, DD/MM/YYYY (heuristic), and natural language.
@@ -633,8 +637,8 @@ function ReviewModal({ sheets, tier, intermediateDoc, onUpdate, onClose }) {
                     <tr key={i} style={td}>
                       <td><input style={cell} value={a.name||""} onChange={e=>updateActField(i,"name",e.target.value)}/></td>
                       <td><input style={cell} value={a.phase||""} onChange={e=>updateActField(i,"phase",e.target.value)}/></td>
-                      <td><input type="date" style={cell} value={a.startDate||""} onChange={e=>updateActField(i,"startDate",e.target.value)}/></td>
-                      <td><input type="date" style={cell} value={a.targetDate||""} onChange={e=>updateActField(i,"targetDate",e.target.value)}/></td>
+                      <td><DatePickerField value={a.startDate||""} onChange={v=>updateActField(i,"startDate",v)} style={cell} /></td>
+                      <td><DatePickerField value={a.targetDate||""} onChange={v=>updateActField(i,"targetDate",v)} style={cell} /></td>
                       <td><button onClick={()=>removeAct(i)} style={{ background:"none", border:"none", color:C.risk, cursor:"pointer", fontSize:12 }}>✕</button></td>
                     </tr>
                   ))}
@@ -652,7 +656,7 @@ function ReviewModal({ sheets, tier, intermediateDoc, onUpdate, onClose }) {
                     <tr key={i} style={td}>
                       <td><input style={cell} value={m.name||""} onChange={e=>updateMileField(i,"name",e.target.value)}/></td>
                       <td><input style={cell} value={m.phase||""} onChange={e=>updateMileField(i,"phase",e.target.value)}/></td>
-                      <td><input type="date" style={cell} value={m.targetDate||""} onChange={e=>updateMileField(i,"targetDate",e.target.value)}/></td>
+                      <td><DatePickerField value={m.targetDate||""} onChange={v=>updateMileField(i,"targetDate",v)} style={cell} /></td>
                       <td><button onClick={()=>removeMile(i)} style={{ background:"none", border:"none", color:C.risk, cursor:"pointer", fontSize:12 }}>✕</button></td>
                     </tr>
                   ))}
@@ -1539,6 +1543,7 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
 
   const inp = { background:C.surface2, border:`1px solid ${C.border}`, borderRadius:6, color:C.sage,
     fontSize:13, padding:"10px 13px", outline:"none", width:"100%", boxSizing:"border-box", fontFamily:"inherit" };
+  const hiddenScrollbarStyle = { scrollbarWidth:"none", msOverflowStyle:"none" };
 
   if (!tier) return <TierSelect onSelect={(t)=>onSheetUpdate("__tier__",{},"empty",t)} onBack={onLogout}/>;
 
@@ -1652,6 +1657,11 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
 
     return (
       <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", position:"relative" }}>
+        <style>{`
+          .project-setup-hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
 
         <div style={{ background:C.surface2, borderBottom:`1px solid ${C.border}`, padding:"10px 24px", flexShrink:0 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", fontSize:11, color:C.muted, marginBottom:6 }}>
@@ -1696,7 +1706,7 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
 
               <div style={{ fontSize:16, fontWeight:700, color:C.sage, marginBottom:18, flexShrink:0 }}>{currentCluster.title}</div>
 
-              <div style={{ flex:1, minHeight:0, overflowY:"auto", marginBottom:4 }}>
+              <div className="project-setup-hide-scrollbar" style={{ flex:1, minHeight:0, overflowY:"auto", marginBottom:4, ...hiddenScrollbarStyle }}>
               {currentCluster.fields.map(field => {
                 if (field.optional && isFieldKnown(field.key)) return null;
 
@@ -1728,7 +1738,7 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
                       )}
 
                       <div style={{ fontSize:9, color:C.muted, textTransform:"uppercase", letterSpacing:".4px", marginBottom:6 }}>Add another role</div>
-                      <div style={{ maxHeight:220, overflowY:"auto", marginBottom:10 }}>
+                      <div className="project-setup-hide-scrollbar" style={{ maxHeight:220, overflowY:"auto", marginBottom:10, ...hiddenScrollbarStyle }}>
                         {ROLE_GROUPS.map(g => (
                           <div key={g.label} style={{ marginBottom:10 }}>
                             <div style={{ fontSize:9, color:C.muted, textTransform:"uppercase", marginBottom:5 }}>{g.label}</div>
@@ -1920,6 +1930,15 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
 
   return (
     <div style={{ display:"flex", flexDirection:"column", flex:1, overflow:"hidden", height:"100%" }}>
+      <style>{`
+        .project-setup-hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .project-setup-sheet-host > * {
+          width: 100%;
+          max-width: 900px !important;
+        }
+      `}</style>
       <div style={{ background:C.surface2, borderBottom:`1px solid ${C.border}`, padding:"8px 20px", flexShrink:0 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", fontSize:11, color:C.muted, marginBottom:5 }}>
           <span>Project setup — <strong style={{ color:C.accentL }}>{tierCfg.label}</strong> tier</span>
@@ -1999,13 +2018,15 @@ Return ONLY JSON, no markdown: {"suggestions":["item1","item2","item3","item4","
         )}
       </div>
 
-      <div style={{ flex:1, overflowY:"auto", padding:"20px" }} onChange={()=>setDirtySheet(true)}>
-        {SheetComp && (
-          <SheetComp data={sheets[activeSheet]?.data||{}} locked={sheets[activeSheet]?.locked||false}
-            project={project} loginCodes={l2?.loginCodes||[]} allSheets={sheets}
-            // Save a safe copy before each edit so Discard can roll the sheet back.
-            onUpdate={(data,status)=>{ captureSheetSnapshot(activeSheet); setDirtySheet(true); onSheetUpdate(activeSheet,data,status); }}/>
-        )}
+      <div className="project-setup-hide-scrollbar" style={{ flex:1, overflowY:"auto", padding:"20px", ...hiddenScrollbarStyle }} onChange={()=>setDirtySheet(true)}>
+        <div className="project-setup-sheet-host" style={{ width:"100%", maxWidth:1200, margin:"0 auto", display:"flex", justifyContent:"center" }}>
+          {SheetComp && (
+            <SheetComp data={sheets[activeSheet]?.data||{}} locked={sheets[activeSheet]?.locked||false}
+              project={project} loginCodes={l2?.loginCodes||[]} allSheets={sheets}
+              // Save a safe copy before each edit so Discard can roll the sheet back.
+              onUpdate={(data,status)=>{ captureSheetSnapshot(activeSheet); setDirtySheet(true); onSheetUpdate(activeSheet,data,status); }}/>
+          )}
+        </div>
       </div>
 
 
